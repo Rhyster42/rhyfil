@@ -19,3 +19,10 @@ type Product struct {
 	Count     sql.NullInt32
 	Price     sql.NullString
 }
+
+type User struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+}

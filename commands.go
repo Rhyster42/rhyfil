@@ -1,16 +1,8 @@
 package main
 
 import (
-	"rhyfil/internal/config"
-
 	"errors"
-	"rhyfil/internal/database"
 )
-
-type state struct {
-	db  *database.Queries
-	cfg *config.Config
-}
 
 type command struct {
 	Name string
