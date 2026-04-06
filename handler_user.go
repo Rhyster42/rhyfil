@@ -58,3 +58,12 @@ func printUser(user database.User) {
 	fmt.Printf(" * ID: %s\n", user.ID)
 	fmt.Printf(" * Name: %s\n", user.Name)
 }
+
+func handlerClearUsers(s *state, cmd command) error {
+	err := s.db.ClearUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("error clearing users: %v", err)
+	}
+	fmt.Println("All users cleared!")
+	return nil
+}
