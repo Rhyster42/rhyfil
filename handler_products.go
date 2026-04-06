@@ -46,3 +46,12 @@ func HandlerAddProduct(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerClearProducts(s *state, cmd command) error {
+	err := s.db.DeleteAllProducts(context.Background())
+	if err != nil {
+		return fmt.Errorf("error clearing products: %v", err)
+	}
+	fmt.Println("All products cleared!")
+	return nil
+}
