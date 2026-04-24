@@ -9,3 +9,8 @@ VALUES (
 	$6
 )
 RETURNING *;
+
+-- name: DeleteAllProducts :exec
+DELETE FROM products;
+
+

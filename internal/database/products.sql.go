@@ -55,3 +55,12 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 	)
 	return i, err
 }
+
+const deleteAllProducts = `-- name: DeleteAllProducts :exec
+DELETE FROM products
+`
+
+func (q *Queries) DeleteAllProducts(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteAllProducts)
+	return err
+}
