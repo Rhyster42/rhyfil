@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"rhyfil/server"
 )
@@ -16,6 +17,10 @@ func handlerSpinServer(s *state, cmd command) error {
 		}
 		server.RespondWithJSON(w, http.StatusOK, menuItems)
 	})
+
+	http.Handle("/", http.FileServer(http.Dir("../frontend")))
+
+	log.Print("Running server...")
 
 	return http.ListenAndServe(":8080", nil)
 }
