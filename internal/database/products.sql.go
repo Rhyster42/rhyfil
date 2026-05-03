@@ -64,3 +64,37 @@ func (q *Queries) DeleteAllProducts(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllProducts)
 	return err
 }
+
+const getAllProducts = `-- name: GetAllProducts :many
+SELECT id, created_at, updated_at, name, count, price FROM products
+`
+
+func (q *Queries) GetAllProducts(ctx context.Context) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, getAllProducts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.Count,
+			&i.Price,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

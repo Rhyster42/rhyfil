@@ -13,4 +13,5 @@ RETURNING *;
 -- name: DeleteAllProducts :exec
 DELETE FROM products;
 
-
+-- name: GetAllProducts :many
+SELECT * FROM products;

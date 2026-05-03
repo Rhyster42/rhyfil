@@ -18,12 +18,12 @@ type state struct {
 }
 
 func main() {
-	cfg, err := config.Read()
+	cfg, err := config.Read() //builds from config file
 	if err != nil {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	db, err := sql.Open("postgres", cfg.DBURL)
+	db, err := sql.Open("postgres", cfg.DBURL) //grab database
 	if err != nil {
 		log.Fatalf("error opening database: %v", err)
 	}
@@ -35,7 +35,7 @@ func main() {
 		cfg: &cfg,
 	}
 
-	cmds := commands{
+	cmds := commands{ // set up CLI commands
 		registeredCommands: make(map[string]func(*state, command) error),
 	}
 	cmds.register("login", handlerLogin)
@@ -43,6 +43,7 @@ func main() {
 	cmds.register("newproduct", HandlerAddProduct)
 	cmds.register("clearusers", handlerClearUsers)
 	cmds.register("clearproducts", handlerClearProducts)
+	cmds.register("serve", handlerSpinServer)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
