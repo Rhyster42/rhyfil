@@ -18,7 +18,7 @@ VALUES (
 )
 RETURNING *;
 
--- name: AddModifierToOrderItem :one
+-- name: AddModifierToOrderItem :exec
 INSERT INTO order_items_modifiers (order_item_id, modifier_option_id, price_adjustment_at_purchase)
 VALUES (
     $1,
