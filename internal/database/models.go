@@ -11,6 +11,38 @@ import (
 	"github.com/google/uuid"
 )
 
+type ModifierGroup struct {
+	ID   uuid.UUID
+	Name string
+}
+
+type ModifierOption struct {
+	ID              uuid.UUID
+	Name            string
+	PriceAdjustment sql.NullString
+	ModifierGroupID uuid.UUID
+}
+
+type Order struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	Total     sql.NullString
+}
+
+type OrderItem struct {
+	ID              uuid.UUID
+	OrderID         uuid.NullUUID
+	ProductID       uuid.NullUUID
+	Quantity        sql.NullInt32
+	PriceAtPurchase sql.NullString
+}
+
+type OrderItemsModifier struct {
+	OrderItemID               uuid.UUID
+	ModifierOptionID          uuid.UUID
+	PriceAdjustmentAtPurchase sql.NullString
+}
+
 type Product struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
@@ -18,6 +50,11 @@ type Product struct {
 	Name      string
 	Count     sql.NullInt32
 	Price     sql.NullString
+}
+
+type ProductModifierGroup struct {
+	ProductID       uuid.UUID
+	ModifierGroupID uuid.UUID
 }
 
 type User struct {

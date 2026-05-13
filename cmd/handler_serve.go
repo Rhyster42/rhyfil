@@ -45,7 +45,7 @@ func handlerSpinServer(s *state, cmd command) error {
 		modifierGroupString := r.URL.Query().Get("group_id")
 		modifierGroupID, err := uuid.Parse(modifierGroupString)
 		if err != nil {
-			server.RespondWithError(w, http.StatusBadRequest, "failer to parse uuid for modifier group:", err)
+			server.RespondWithError(w, http.StatusBadRequest, "failed to parse uuid for modifier group:", err)
 			return
 		}
 

@@ -98,3 +98,15 @@ func (q *Queries) GetAllProducts(ctx context.Context) ([]Product, error) {
 	}
 	return items, nil
 }
+
+const getIdForProduct = `-- name: GetIdForProduct :one
+SELECT id FROM products
+WHERE $1 = name
+`
+
+func (q *Queries) GetIdForProduct(ctx context.Context, name string) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, getIdForProduct, name)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}

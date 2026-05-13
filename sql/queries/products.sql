@@ -15,3 +15,7 @@ DELETE FROM products;
 
 -- name: GetAllProducts :many
 SELECT * FROM products;
+
+-- name: GetIdForProduct :one
+SELECT id FROM products
+WHERE $1 = name;

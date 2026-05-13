@@ -11,9 +11,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerAddProduct(s *state, cmd command) error {
+func handlerAddProduct(s *state, cmd command) error {
 	if len(cmd.Args) < 3 {
-		return fmt.Errorf("usage: %s <Product Name> <Price> <Quantity>", cmd.Name)
+		return fmt.Errorf("usage: %s <Product Name> <Quantity> <Price>", cmd.Name)
 	}
 
 	productName := cmd.Args[0]

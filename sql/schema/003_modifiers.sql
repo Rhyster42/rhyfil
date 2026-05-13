@@ -1,12 +1,12 @@
 -- +goose Up
 CREATE TABLE modifier_groups (
 	id UUID PRIMARY KEY,
-	name TEXT
+	name TEXT NOT NULL
 );
 
 CREATE TABLE modifier_options (
 	id UUID PRIMARY KEY,
-	name TEXT,
+	name TEXT NOT NULL,
 	price_adjustment DECIMAL,
 	modifier_group_id UUID NOT NULL,
 	CONSTRAINT fk_modifier_groups

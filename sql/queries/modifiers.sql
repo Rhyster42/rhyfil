@@ -32,3 +32,7 @@ WHERE $1 = product_modifier_groups.product_id;
 -- name: GetAllOptionsForModifierGroup :many
 SELECT * FROM modifier_options
 WHERE $1 = modifier_group_id;
+
+-- name: GetIdForGroup :one
+SELECT id FROM modifier_groups
+WHERE $1 = name;

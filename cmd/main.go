@@ -40,10 +40,12 @@ func main() {
 	}
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
-	cmds.register("newproduct", HandlerAddProduct)
+	cmds.register("newproduct", handlerAddProduct)
 	cmds.register("clearusers", handlerClearUsers)
 	cmds.register("clearproducts", handlerClearProducts)
 	cmds.register("serve", handlerSpinServer)
+	cmds.register("addmodifiergroup", handlerAddModGroup)
+	cmds.register("addgroupoption", handlerAddModOption)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
