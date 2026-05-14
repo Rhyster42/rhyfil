@@ -26,14 +26,14 @@ func handlerAddModGroup(s *state, cmd command) error {
 		return fmt.Errorf("error add product: %v", err)
 	}
 
-	fmt.Printf("Modifier group '%s' added successfully", groupName)
+	fmt.Printf("Modifier group '%s' added successfully \n", groupName)
 
 	return nil
 }
 
 func handlerAddModOption(s *state, cmd command) error {
 	if len(cmd.Args) < 3 {
-		return fmt.Errorf("usage: %s <Modifier Option Name> <Price Adjustment> <Modifier Group ID OR Modifier Group Name", cmd.Name)
+		return fmt.Errorf("usage: %s <Modifier Option Name> <Price Adjustment> <Modifier Group ID OR Modifier Group Name>", cmd.Name)
 	}
 	isUUID, parsedID := helperResolveUUID(cmd.Args[2])
 	if !isUUID {
@@ -47,6 +47,7 @@ func handlerAddModOption(s *state, cmd command) error {
 	optionName := cmd.Args[0]
 
 	_, err := s.db.CreateModifierOption(context.Background(), database.CreateModifierOptionParams{
+		ID:   uuid.New(),
 		Name: optionName,
 		PriceAdjustment: sql.NullString{
 			String: price,
@@ -57,7 +58,7 @@ func handlerAddModOption(s *state, cmd command) error {
 	if err != nil {
 		return fmt.Errorf("Error adding Modifier Option to Modifier Group: %v", err)
 	}
-	fmt.Printf("Modifier option %s added to modifier group %s", optionName, cmd.Args[2])
+	fmt.Printf("Modifier option %s added to modifier group %s \n", optionName, cmd.Args[2])
 	return nil
 }
 
@@ -68,7 +69,7 @@ func handlerLinkModifier(s *state, cmd command) error {
 
 	isUUID, parsedProductID := helperResolveUUID(cmd.Args[0])
 	if !isUUID {
-		retrievedID, err := s.db.GetIdForProduct(context.Background(), cmd.Args[1])
+		retrievedID, err := s.db.GetIdForProduct(context.Background(), cmd.Args[0])
 		if err != nil {
 			return fmt.Errorf("Failed to retreive Product ID from database: %v", err)
 		}
@@ -92,7 +93,7 @@ func handlerLinkModifier(s *state, cmd command) error {
 		return fmt.Errorf("Failed to link modifier group to product in database: %v", err)
 	}
 
-	fmt.Printf("Product %s linked to Modifer Group %s", cmd.Args[0], cmd.Args[1])
+	fmt.Printf("Product %s linked to Modifer Group %s \n", cmd.Args[0], cmd.Args[1])
 	return nil
 }
 
