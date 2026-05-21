@@ -1,3 +1,7 @@
+let pendingItem = null;
+let pendingQuantity = 0;
+let cart = [];
+
 async function loadMenu() {
     try {
         const response = await fetch('http://localhost:8080/items');
@@ -10,18 +14,36 @@ async function loadMenu() {
         let menuString = ""
 
         menuItems.forEach(item => {
-            menuString += `<tr data-id="${item.ID}"><td>${item.Name}</td></tr>`
+            menuString += `<tr data-id="${item.ID}" data-name="${item.Name}" data-price="${item.Price.String}"><td>${item.Name}</td></tr>`
         });
 
-        tableMenu.innerHTML = menuString;
+        tableMenu.innerHTML = menuString; // whats visible in menu table
 
         const rows = tableMenu.querySelectorAll("tr");
         rows.forEach(row => {
             row.addEventListener("click", () => {
                 const productId = row.dataset.id;
                 loadModifiers(productId);
+                if (row.classList.contains('selected')) {
+                    pendingQuantity++;
+                    document.getElementById("add_button").textContent = `Add to Cart (${pendingQuantity})`;
+                } else {
+                    rows.forEach(r => r.classList.remove("selected"));
+                    row.classList.add("selected");
+                    pendingQuantity = 1;
+                    document.getElementById("add_button").textContent = `Add to Cart (${pendingQuantity})`;
+                }
+                pendingItem = {
+                    id: row.dataset.id,
+                    name: row.dataset.name,
+                    price: row.dataset.price,
+                    modifiers: []
+                };           
             });
         });
+
+        const addToCartButton = document.getElementById('add_button');
+        addToCartButton.addEventListener("click", addToCart);
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -49,13 +71,74 @@ async function loadModifiers(productId) {
         modGroupsString += `<tr><td>${modifierGroups[i].Name}</td></tr>`;
         let modOptionsString = "<tr>";
         for (let j = 0; j < modOptions.length; j++) {
-            modOptionsString += `<td>${modOptions[j].Name}</td>`
+            modOptionsString += `<td class=mod_options data-id="${modOptions[j].ID}" data-name="${modOptions[j].Name}" data-price="${modOptions[j].PriceAdjustment.String}">${modOptions[j].Name}</td>`
         };
         modGroupsString += modOptionsString + '</tr>';
     }
 
-    modifierTable.innerHTML = modGroupsString;
-    
+    modifierTable.innerHTML = modGroupsString; //whats visible in modifier table
+
+    const modRows = modifierTable.querySelectorAll("td.mod_options")
+
+    modRows.forEach(row => {
+        row.addEventListener("click", () => {
+            row.classList.toggle('selected');
+            let modData = {
+                id: row.dataset.id,
+                name: row.dataset.name,
+                price: row.dataset.price
+            };
+            if (row.classList.contains('selected')) {
+                pendingItem.modifiers.push(modData)
+            } else {
+                pendingItem.modifiers = pendingItem.modifiers.filter(m => m.id !== modData.id)
+            }
+        })
+    })
 }
+
+async function addToCart() {
+    if (!pendingItem) return;
+
+    const cartItems = document.getElementById("cart-table");
+    let currentOrderString = cartItems.innerHTML;
+    
+    currentOrderString += `<tr><td item-id="${pendingItem.id}" class="cart-item">${pendingItem.name}-${pendingItem.price}</td></tr>`
+    let itemTotal = Number(pendingItem.price);
+
+    pendingItem.modifiers.forEach(modifier => {
+        currentOrderString += `<tr><td class="cart-mod">${modifier.name}-${modifier.price}</td></tr>`;
+        itemTotal += Number(modifier.price);
+    });
+
+    currentOrderString += `<tr><td class="item-total">${itemTotal}</td></tr>`;
+
+    let itemData = {
+        id: pendingItem.id,
+        name: pendingItem.name,
+        price: pendingItem.price,
+        modifiers: pendingItem.modifiers,
+        itemTotal: itemTotal
+    }
+    cart.push(itemData)
+
+    calculateTotal()
+
+    cartItems.innerHTML = currentOrderString;
+
+
+};
+
+async function calculateTotal() {
+    let cartTotal = document.getElementById('cart-total')
+    let total = 0
+
+    cart.forEach(item => {
+        total += item.itemTotal
+    });
+    const formattedTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total);
+    cartTotal.innerHTML = formattedTotal;
+}
+
 
 loadMenu();
