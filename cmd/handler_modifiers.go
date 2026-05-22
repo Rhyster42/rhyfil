@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"rhyfil/internal/database"
 
@@ -47,12 +46,9 @@ func handlerAddModOption(s *state, cmd command) error {
 	optionName := cmd.Args[0]
 
 	_, err := s.db.CreateModifierOption(context.Background(), database.CreateModifierOptionParams{
-		ID:   uuid.New(),
-		Name: optionName,
-		PriceAdjustment: sql.NullString{
-			String: price,
-			Valid:  true,
-		},
+		ID:              uuid.New(),
+		Name:            optionName,
+		PriceAdjustment: price,
 		ModifierGroupID: parsedID,
 	})
 	if err != nil {

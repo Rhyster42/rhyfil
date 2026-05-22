@@ -32,7 +32,7 @@ type CreateProductParams struct {
 	UpdatedAt time.Time
 	Name      string
 	Count     sql.NullInt32
-	Price     sql.NullString
+	Price     string
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {

@@ -14,7 +14,7 @@ async function loadMenu() {
         let menuString = ""
 
         menuItems.forEach(item => {
-            menuString += `<tr data-id="${item.ID}" data-name="${item.Name}" data-price="${item.Price.String}"><td>${item.Name}</td></tr>`
+            menuString += `<tr data-id="${item.ID}" data-name="${item.Name}" data-price="${item.Price}"><td>${item.Name}</td></tr>`
         });
 
         tableMenu.innerHTML = menuString; // whats visible in menu table
@@ -44,6 +44,8 @@ async function loadMenu() {
 
         const addToCartButton = document.getElementById('add_button');
         addToCartButton.addEventListener("click", addToCart);
+        const checkOutButton = document.getElementById('check-out');
+        checkOutButton.addEventListener("click", checkOut)
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -71,7 +73,7 @@ async function loadModifiers(productId) {
         modGroupsString += `<tr><td>${modifierGroups[i].Name}</td></tr>`;
         let modOptionsString = "<tr>";
         for (let j = 0; j < modOptions.length; j++) {
-            modOptionsString += `<td class=mod_options data-id="${modOptions[j].ID}" data-name="${modOptions[j].Name}" data-price="${modOptions[j].PriceAdjustment.String}">${modOptions[j].Name}</td>`
+            modOptionsString += `<td class=mod_options data-id="${modOptions[j].ID}" data-name="${modOptions[j].Name}" data-price="${modOptions[j].PriceAdjustment}">${modOptions[j].Name}</td>`
         };
         modGroupsString += modOptionsString + '</tr>';
     }
@@ -103,7 +105,8 @@ async function addToCart() {
     const cartItems = document.getElementById("cart-table");
     let currentOrderString = cartItems.innerHTML;
     
-    currentOrderString += `<tr><td item-id="${pendingItem.id}" class="cart-item">${pendingItem.name}-${pendingItem.price}</td></tr>`
+
+    currentOrderString += `<tr><td item-id="${pendingItem.id}" class="cart-item">${pendingItem.name} X ${pendingQuantity}-${pendingItem.price}</td></tr>`
     let itemTotal = Number(pendingItem.price);
 
     pendingItem.modifiers.forEach(modifier => {
@@ -118,27 +121,65 @@ async function addToCart() {
         name: pendingItem.name,
         price: pendingItem.price,
         modifiers: pendingItem.modifiers,
-        itemTotal: itemTotal
+        itemTotal: itemTotal,
+        quantity: pendingQuantity
     }
     cart.push(itemData)
+    
 
     calculateTotal()
 
     cartItems.innerHTML = currentOrderString;
 
-
+    pendingQuantity = 0
+    pendingItem = null;
+    document.getElementById("add_button").textContent = "Add to Cart";
 };
 
-async function calculateTotal() {
-    let cartTotal = document.getElementById('cart-total')
-    let total = 0
-
-    cart.forEach(item => {
-        total += item.itemTotal
-    });
+function calculateTotal() {
+    let cartTotal = document.getElementById('cart-total')  
+    
+    let total = cart.reduce((total, item) => (total + (item.itemTotal * item.quantity)), 0)
+   
     const formattedTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total);
     cartTotal.innerHTML = formattedTotal;
 }
 
+async function checkOut() {
+    
+    let jsonCartItems = []
+
+    cart.forEach(item => {
+        let jsonMods = []
+        item.modifiers.forEach(modifier => {
+            jsonMods.push({
+                modId: modifier.id,
+                priceAdjustment: parseFloat(modifier.price)
+            });
+        })
+        jsonCartItems.push({
+            productId: item.id,
+            itemTotal: parseFloat(item.itemTotal),
+            itemMods: jsonMods,
+            quantity: item.quantity
+        });
+    })
+
+    let orderTotal = cart.reduce((sum, item) => sum + (item.itemTotal * item.quantity), 0);
+
+    let jsonOrder = {
+        total: orderTotal,
+        items: jsonCartItems
+    };
+
+    const response = await fetch('http://localhost:8080/checkout', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonOrder)
+    });
+    return response.json(); 
+}
 
 loadMenu();

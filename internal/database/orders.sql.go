@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,10 +26,10 @@ RETURNING id, order_id, product_id, quantity, price_at_purchase
 
 type AddItemToOrderParams struct {
 	ID              uuid.UUID
-	OrderID         uuid.NullUUID
-	ProductID       uuid.NullUUID
-	Quantity        sql.NullInt32
-	PriceAtPurchase sql.NullString
+	OrderID         uuid.UUID
+	ProductID       uuid.UUID
+	Quantity        int32
+	PriceAtPurchase string
 }
 
 func (q *Queries) AddItemToOrder(ctx context.Context, arg AddItemToOrderParams) (OrderItem, error) {
@@ -65,7 +64,7 @@ RETURNING order_item_id, modifier_option_id, price_adjustment_at_purchase
 type AddModifierToOrderItemParams struct {
 	OrderItemID               uuid.UUID
 	ModifierOptionID          uuid.UUID
-	PriceAdjustmentAtPurchase sql.NullString
+	PriceAdjustmentAtPurchase string
 }
 
 func (q *Queries) AddModifierToOrderItem(ctx context.Context, arg AddModifierToOrderItemParams) error {
@@ -86,7 +85,7 @@ RETURNING id, created_at, total
 type CreateOrderParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
-	Total     sql.NullString
+	Total     string
 }
 
 func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order, error) {
@@ -105,12 +104,12 @@ WHERE order_items.order_id = $1
 `
 
 type GetAllItemsInOrderRow struct {
-	Quantity        sql.NullInt32
-	PriceAtPurchase sql.NullString
+	Quantity        int32
+	PriceAtPurchase string
 	Name            string
 }
 
-func (q *Queries) GetAllItemsInOrder(ctx context.Context, orderID uuid.NullUUID) ([]GetAllItemsInOrderRow, error) {
+func (q *Queries) GetAllItemsInOrder(ctx context.Context, orderID uuid.UUID) ([]GetAllItemsInOrderRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAllItemsInOrder, orderID)
 	if err != nil {
 		return nil, err

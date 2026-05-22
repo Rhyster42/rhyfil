@@ -7,7 +7,7 @@ CREATE TABLE modifier_groups (
 CREATE TABLE modifier_options (
 	id UUID PRIMARY KEY,
 	name TEXT NOT NULL,
-	price_adjustment DECIMAL,
+	price_adjustment DECIMAL NOT NULL,
 	modifier_group_id UUID NOT NULL,
 	CONSTRAINT fk_modifier_groups
 		FOREIGN KEY (modifier_group_id)

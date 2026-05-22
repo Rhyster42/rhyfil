@@ -5,7 +5,7 @@ CREATE TABLE products (
 	updated_at TIMESTAMP NOT NULL,
 	name TEXT NOT NULL,
 	count INTEGER,
-	price DECIMAL
+	price DECIMAL NOT NULL
 );
 
 -- +goose Down

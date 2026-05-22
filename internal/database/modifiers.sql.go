@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -47,7 +46,7 @@ RETURNING id, name, price_adjustment, modifier_group_id
 type CreateModifierOptionParams struct {
 	ID              uuid.UUID
 	Name            string
-	PriceAdjustment sql.NullString
+	PriceAdjustment string
 	ModifierGroupID uuid.UUID
 }
 

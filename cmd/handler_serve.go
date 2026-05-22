@@ -58,6 +58,8 @@ func handlerSpinServer(s *state, cmd command) error {
 		server.RespondWithJSON(w, http.StatusOK, modifierOptions)
 	})
 
+	http.HandleFunc("/checkout", handlerCheckOut(s))
+
 	http.Handle("/", http.FileServer(http.Dir("../frontend")))
 
 	log.Print("Running server...")

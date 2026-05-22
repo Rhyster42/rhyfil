@@ -46,6 +46,7 @@ func main() {
 	cmds.register("serve", handlerSpinServer)
 	cmds.register("addmodifiergroup", handlerAddModGroup)
 	cmds.register("addgroupoption", handlerAddModOption)
+	cmds.register("linkproducttogroup", handlerLinkModifier)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")

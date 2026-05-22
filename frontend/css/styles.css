@@ -26,3 +26,7 @@ footer {
     display:flex;
     justify-content: right;
 }
+
+.selected {
+    background-color: #a8d8a8;
+}

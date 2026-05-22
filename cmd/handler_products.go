@@ -33,10 +33,7 @@ func handlerAddProduct(s *state, cmd command) error {
 				Int32: int32(quantity),
 				Valid: true,
 			},
-			Price: sql.NullString{
-				String: price,
-				Valid:  true,
-			},
+			Price: price,
 		})
 	if err != nil {
 		return fmt.Errorf("error adding product: %v", err)

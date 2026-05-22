@@ -19,28 +19,28 @@ type ModifierGroup struct {
 type ModifierOption struct {
 	ID              uuid.UUID
 	Name            string
-	PriceAdjustment sql.NullString
+	PriceAdjustment string
 	ModifierGroupID uuid.UUID
 }
 
 type Order struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
-	Total     sql.NullString
+	Total     string
 }
 
 type OrderItem struct {
 	ID              uuid.UUID
-	OrderID         uuid.NullUUID
-	ProductID       uuid.NullUUID
-	Quantity        sql.NullInt32
-	PriceAtPurchase sql.NullString
+	OrderID         uuid.UUID
+	ProductID       uuid.UUID
+	Quantity        int32
+	PriceAtPurchase string
 }
 
 type OrderItemsModifier struct {
 	OrderItemID               uuid.UUID
 	ModifierOptionID          uuid.UUID
-	PriceAdjustmentAtPurchase sql.NullString
+	PriceAdjustmentAtPurchase string
 }
 
 type Product struct {
@@ -49,7 +49,7 @@ type Product struct {
 	UpdatedAt time.Time
 	Name      string
 	Count     sql.NullInt32
-	Price     sql.NullString
+	Price     string
 }
 
 type ProductModifierGroup struct {
