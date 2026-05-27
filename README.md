@@ -1,6 +1,6 @@
 # ⭐ Welcome to rhyfil!
-- A point-of-sale web app build for tablet use.
-- Designed as a learning project to demonstrate full stack development with Go and PostgreSQL.
+- A point-of-sale web app built for tablet use.
+- Working in the service industry for the last ten years and coffee shops for most of them, I've had a lot of experience working with different POS systems, and wanted to make a more streamlined "product to modifiers to transaction" organization that is focused on the improving the workflow of a busy barista without sacrificing quality for the customer. A lot of POS sale applications are built with an over abundance of features that clog up the cycle because they are built to be universally designed for other industries. Rhyfil is designed from the ground up with the intention to simplify the process for the user by having simple, powerful actions available and avoiding unnecesary tools and required actions.
 
 ## 🔦 Tech Stack
 - **Backend** Go 1.23, net/http library
