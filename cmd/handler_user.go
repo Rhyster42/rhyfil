@@ -2,12 +2,19 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"rhyfil/internal/database"
+	"rhyfil/server"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type login struct {
+	Name string `json:"name"`
+}
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Args) != 1 {
@@ -66,4 +73,24 @@ func handlerClearUsers(s *state, cmd command) error {
 	}
 	fmt.Println("All users cleared!")
 	return nil
+}
+
+func handlerHTTPLogin(s *state) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var login login
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&login); err != nil {
+			server.RespondWithError(w, http.StatusBadRequest, "failed to decode JSON: ", err)
+			return
+		}
+
+		loginData, err := s.db.GetUser(context.Background(), login.Name)
+		if err != nil {
+			server.RespondWithError(w, http.StatusUnauthorized, "failed to retrieve login data: ", err)
+			return
+		}
+
+		server.RespondWithJSON(w, http.StatusOK, loginData)
+	}
 }

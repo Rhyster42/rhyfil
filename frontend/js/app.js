@@ -2,6 +2,10 @@ let pendingItem = null;
 let pendingQuantity = 0;
 let cart = [];
 
+if (!localStorage.getItem('user')) {
+    window.location.href = '/login.html';
+}
+
 async function loadMenu() {
     try {
         const response = await fetch('http://localhost:8080/items');
@@ -106,15 +110,16 @@ async function addToCart() {
     let currentOrderString = cartItems.innerHTML;
     
 
-    currentOrderString += `<tr><td item-id="${pendingItem.id}" class="cart-item">${pendingItem.name} X ${pendingQuantity}-${pendingItem.price}</td></tr>`
+    currentOrderString += `<tr><td class="cart-item-name">${pendingItem.name}  x${pendingQuantity}</td><td class="cart-item-price">${pendingItem.price}</td></tr>`
     let itemTotal = Number(pendingItem.price);
 
     pendingItem.modifiers.forEach(modifier => {
-        currentOrderString += `<tr><td class="cart-mod">${modifier.name}-${modifier.price}</td></tr>`;
+        currentOrderString += `<tr><td class="cart-mod-name">${modifier.name}</td><td class="cart-mod-price">${modifier.price}</td></tr>`;
         itemTotal += Number(modifier.price);
     });
 
-    currentOrderString += `<tr><td class="item-total">${itemTotal}</td></tr>`;
+    let formattedItemTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(itemTotal);
+    currentOrderString += `<tr><td class="item-total">${formattedItemTotal}</td></tr>`;
 
     let itemData = {
         id: pendingItem.id,
