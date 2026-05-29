@@ -36,17 +36,8 @@ func main() {
 	}
 
 	cmds := commands{ // set up CLI commands
-		registeredCommands: make(map[string]func(*state, command) error),
+		registeredCommands: getCommands(),
 	}
-	cmds.register("login", handlerLogin)
-	cmds.register("register", handlerRegister)
-	cmds.register("newproduct", handlerAddProduct)
-	cmds.register("clearusers", handlerClearUsers)
-	cmds.register("clearproducts", handlerClearProducts)
-	cmds.register("serve", handlerSpinServer)
-	cmds.register("addmodifiergroup", handlerAddModGroup)
-	cmds.register("addgroupoption", handlerAddModOption)
-	cmds.register("linkproducttogroup", handlerLinkModifier)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
@@ -55,7 +46,7 @@ func main() {
 	cmdName := os.Args[1]
 	cmdArgs := os.Args[2:]
 
-	err = cmds.run(programState, command{Name: cmdName, Args: cmdArgs})
+	err = cmds.run(programState, command{name: cmdName, args: cmdArgs})
 	if err != nil {
 		log.Fatal(err)
 	}

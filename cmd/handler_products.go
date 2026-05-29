@@ -12,16 +12,16 @@ import (
 )
 
 func handlerAddProduct(s *state, cmd command) error {
-	if len(cmd.Args) < 3 {
-		return fmt.Errorf("usage: %s <Product Name> <Quantity> <Price>", cmd.Name)
+	if len(cmd.args) < 3 {
+		return fmt.Errorf("usage: %s <Product Name> <Quantity> <Price>", cmd.name)
 	}
 
-	productName := cmd.Args[0]
-	quantity, err := strconv.ParseInt(cmd.Args[1], 10, 32)
+	productName := cmd.args[0]
+	quantity, err := strconv.ParseInt(cmd.args[1], 10, 32)
 	if err != nil {
 		return fmt.Errorf("invalid quantity: %v", err)
 	}
-	price := cmd.Args[2]
+	price := cmd.args[2]
 
 	_, err = s.db.CreateProduct(context.Background(),
 		database.CreateProductParams{

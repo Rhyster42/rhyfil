@@ -17,10 +17,10 @@ type login struct {
 }
 
 func handlerLogin(s *state, cmd command) error {
-	if len(cmd.Args) != 1 {
-		return fmt.Errorf("usage: %s <name>", cmd.Name)
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("usage: %s <name>", cmd.name)
 	}
-	name := cmd.Args[0]
+	name := cmd.args[0]
 
 	_, err := s.db.GetUser(context.Background(), name)
 	if err != nil {
@@ -37,10 +37,10 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 func handlerRegister(s *state, cmd command) error {
-	if len(cmd.Args) != 1 {
-		return fmt.Errorf("usage: %s <name>", cmd.Name)
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("usage: %s <name>", cmd.name)
 	}
-	name := cmd.Args[0]
+	name := cmd.args[0]
 
 	user, err := s.db.CreateUser(context.Background(), database.CreateUserParams{
 		ID:        uuid.New(),
