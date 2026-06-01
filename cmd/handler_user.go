@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type login struct {
-	Name string `json:"name"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 func handlerLogin(s *state, cmd command) error {
@@ -37,16 +39,23 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 func handlerRegister(s *state, cmd command) error {
-	if len(cmd.args) != 1 {
-		return fmt.Errorf("usage: %s <name>", cmd.name)
+	if len(cmd.args) != 2 {
+		return fmt.Errorf("usage: %s <name> <password>", cmd.name)
 	}
 	name := cmd.args[0]
+	password := cmd.args[1]
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("error generating password hash: %v", err)
+	}
 
 	user, err := s.db.CreateUser(context.Background(), database.CreateUserParams{
-		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
-		Name:      name,
+		ID:             uuid.New(),
+		HashedPassword: string(hash),
+		CreatedAt:      time.Now().UTC(),
+		UpdatedAt:      time.Now().UTC(),
+		Name:           name,
 	})
 	if err != nil {
 		return fmt.Errorf("couldn't set current user: %w", err)
@@ -89,6 +98,11 @@ func handlerHTTPLogin(s *state) http.HandlerFunc {
 		if err != nil {
 			server.RespondWithError(w, http.StatusUnauthorized, "failed to retrieve login data: ", err)
 			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(loginData.HashedPassword), []byte(login.Password))
+		if err != nil {
+			server.RespondWithError(w, http.StatusUnauthorized, "failed login: ", err)
 		}
 
 		server.RespondWithJSON(w, http.StatusOK, loginData)
