@@ -18,6 +18,11 @@ type login struct {
 	Password string `json:"password"`
 }
 
+type userResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("usage: %s <name>", cmd.name)
@@ -103,8 +108,12 @@ func handlerHTTPLogin(s *state) http.HandlerFunc {
 		err = bcrypt.CompareHashAndPassword([]byte(loginData.HashedPassword), []byte(login.Password))
 		if err != nil {
 			server.RespondWithError(w, http.StatusUnauthorized, "failed login: ", err)
+			return
 		}
 
-		server.RespondWithJSON(w, http.StatusOK, loginData)
+		server.RespondWithJSON(w, http.StatusOK, userResponse{
+			ID:   loginData.ID.String(),
+			Name: loginData.Name,
+		})
 	}
 }
