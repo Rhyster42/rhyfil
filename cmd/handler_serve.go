@@ -62,6 +62,8 @@ func handlerSpinServer(s *state, cmd command) error {
 
 	http.HandleFunc("/login", handlerHTTPLogin(s))
 
+	http.HandleFunc("/register", handlerHTTPRegister(s))
+
 	http.Handle("/", http.FileServer(http.Dir("../frontend")))
 
 	log.Print("Running server...")

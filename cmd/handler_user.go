@@ -117,3 +117,38 @@ func handlerHTTPLogin(s *state) http.HandlerFunc {
 		})
 	}
 }
+
+func handlerHTTPRegister(s *state) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var newUser login
+
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&newUser); err != nil {
+			server.RespondWithError(w, http.StatusBadRequest, "failed to decode JSON: ", err)
+			return
+		}
+
+		hash, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			server.RespondWithError(w, http.StatusUnauthorized, "error generating password hash: %v", err)
+			return
+		}
+
+		newUserData, err := s.db.CreateUser(context.Background(), database.CreateUserParams{
+			ID:             uuid.New(),
+			CreatedAt:      time.Now(),
+			UpdatedAt:      time.Now(),
+			Name:           newUser.Name,
+			HashedPassword: string(hash),
+		})
+		if err != nil {
+			server.RespondWithError(w, http.StatusInternalServerError, "error creating user in database: ", err)
+			return
+		}
+
+		server.RespondWithJSON(w, http.StatusCreated, userResponse{
+			ID:   newUserData.ID.String(),
+			Name: newUserData.Name,
+		})
+	}
+}

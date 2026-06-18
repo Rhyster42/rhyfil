@@ -22,26 +22,29 @@ func (q *Queries) ClearUsers(ctx context.Context) error {
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, name)
+INSERT INTO users (id, hashed_password, created_at, updated_at, name)
 VALUES (
 	$1,
 	$2,
 	$3,
-	$4
+	$4,
+	$5
 )
-RETURNING id, created_at, updated_at, name
+RETURNING id, created_at, updated_at, name, hashed_password
 `
 
 type CreateUserParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Name      string
+	ID             uuid.UUID
+	HashedPassword string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Name           string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
+		arg.HashedPassword,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.Name,
@@ -52,12 +55,13 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.HashedPassword,
 	)
 	return i, err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, created_at, updated_at, name FROM users WHERE name = $1
+SELECT id, created_at, updated_at, name, hashed_password FROM users WHERE name = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, name string) (User, error) {
@@ -68,6 +72,7 @@ func (q *Queries) GetUser(ctx context.Context, name string) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.HashedPassword,
 	)
 	return i, err
 }
