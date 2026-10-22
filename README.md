@@ -23,7 +23,7 @@
 2. Create a PostgresSQL database and set the connection URL in your config
 3. Run migrations: `goose up`
 4. Seed products: `./rhyfil new-product "Latte" 100 4.50` (name, quantity, price)
-5. register users: `./rhyfil register "John"`
+5. register users: `./rhyfil register "John" "password123"` (name, password)
 6. Optional: Add Modifiers and Modifier Groups with other implemented commands: `add-modifier-group`, `add-group-option`, `link-product-to-group`. Run `./rhyfil help` to see every command.
 7. Start the server: `./rhyfil serve`
 8. Visit `http://localhost:8080/login.html`
